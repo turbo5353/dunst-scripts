@@ -8,17 +8,30 @@ import subprocess
 # unique notification ID
 msgId = "991049"
 
-# maximum length of the volume bar
+# Volume bar
+# maximum length of the volume bar (in segments)
 volumeLength = 32
-
-# Character (or string) to be used for building the volume bar
+# String to be used for building the volume bar
 segment = "─"
+# String to be used for the empty part of the volume bar
+emptySegment = " "
+# String to be placed before the volume bar
+beforeBar = ""
+# String to be placed after the volume bar
+afterBar = ""
 
 # icon to be used in the notification
 icon = "audio-volume-muted-blocking-symbolic"
 
-# If true, the current volume percent will be included in the notification
-showPercent = True
+# Volume value
+# 0: the current volume will not be shown
+# 1: the current volume will be shown on the left of the notification
+# 2: the current volume will be shown on the right of the notification
+showValue = 2
+# String to be placed before the volume number
+beforeValue = " "
+# String to be placed after the volume number
+afterValue = "%"
 
 m = alsaaudio.Mixer()
 volume = m.getvolume()[0]
@@ -36,11 +49,13 @@ if len(sys.argv) > 1:
 msg = "muted"
 if volume > 0 and mute != 1:
     length = volume / 100 * volumeLength
-    msg = segment * int(length)
+    msg = beforeBar + segment * int(length)
+    msg = msg + (emptySegment * (int(volumeLength) - int(length))) + afterBar
 
-    if showPercent:
-        msg = msg + (" " * (int(volumeLength) - int(length)))
-        msg = msg + " " + str(volume) + "%"
+    if showValue == 1:
+        msg = beforeValue + str(volume) + afterValue + msg
+    elif showValue == 2:
+        msg = msg + beforeValue + str(volume) + afterValue
 
 dunstCmd = ["dunstify", "-r", msgId, "-u", "low"]
 
