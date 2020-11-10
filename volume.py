@@ -9,13 +9,16 @@ import alsaaudio
 msgId = "991049"
 
 # maximum length of the volume bar
-volumeLength = 35
+volumeLength = 32
 
 # Character (or string) to be used for building the volume bar
-segment = "x"
+segment = "─"
 
 # icon to be used in the notification
 icon = "audio-volume-muted-blocking-symbolic"
+
+# If true, the current volume percent will be included in the notification
+showPercent = True
 
 m = alsaaudio.Mixer()
 volume = m.getvolume()[0]
@@ -35,10 +38,14 @@ if volume > 0 and mute != 1:
     length = volume / 100 * volumeLength
     msg = segment * int(length)
 
+    if showPercent:
+        msg = msg + (" " * (int(volumeLength) - int(length)))
+        msg = msg + " " + str(volume) + "%"
+
 dunstParams = "-r " + msgId + " -u low "
 if icon != "":
     dunstParams = dunstParams + " -i " + icon + " "
 
-dunstCmd = "dunstify " + dunstParams + msg
+dunstCmd = "dunstify " + dunstParams + "'" + msg + "'"
 os.system(dunstCmd)
 
