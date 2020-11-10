@@ -4,9 +4,18 @@ import sys
 import alsaaudio
 
 # Configuration
-msgId = "991049"        # unique notification ID
-volumeLength = 35       # maximum length of the volume bar
-segment = "x"           # Character (or string) to be used for building the volume bar
+
+# unique notification ID
+msgId = "991049"
+
+# maximum length of the volume bar
+volumeLength = 35
+
+# Character (or string) to be used for building the volume bar
+segment = "x"
+
+# icon to be used in the notification
+icon = "audio-volume-muted-blocking-symbolic"
 
 m = alsaaudio.Mixer()
 volume = m.getvolume()[0]
@@ -23,9 +32,13 @@ if len(sys.argv) > 1:
 
 msg = "muted"
 if volume > 0 and mute != 1:
-    length = volume / 100 * progressLength
+    length = volume / 100 * volumeLength
     msg = segment * int(length)
 
-dunstCmd = "dunstify -r " + msgId + " -u low " + msg
+dunstParams = "-r " + msgId + " -u low "
+if icon != "":
+    dunstParams = dunstParams + " -i " + icon + " "
+
+dunstCmd = "dunstify " + dunstParams + msg
 os.system(dunstCmd)
 
