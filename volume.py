@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import os
 import sys
 import alsaaudio
+import subprocess
 
 # Configuration
 
@@ -42,10 +42,13 @@ if volume > 0 and mute != 1:
         msg = msg + (" " * (int(volumeLength) - int(length)))
         msg = msg + " " + str(volume) + "%"
 
-dunstParams = "-r " + msgId + " -u low "
-if icon != "":
-    dunstParams = dunstParams + " -i " + icon + " "
+dunstCmd = ["dunstify", "-r", msgId, "-u", "low"]
 
-dunstCmd = "dunstify " + dunstParams + "'" + msg + "'"
-os.system(dunstCmd)
+if icon != "":
+    dunstCmd.append("-i")
+    dunstCmd.append(icon)
+
+dunstCmd.append(msg)
+
+subprocess.run(dunstCmd)
 
