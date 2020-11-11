@@ -20,8 +20,15 @@ beforeBar = ""
 # String to be placed after the volume bar
 afterBar = ""
 
-# icon to be used in the notification
-icon = "audio-volume-muted-blocking-symbolic"
+# Icons
+# High volume
+iconHigh = "audio-volume-high-symbolic"
+# Medium volume
+iconMedium = "audio-volume-medium-symbolic"
+# Low volume
+iconLow = "audio-volume-low-symbolic"
+# Audio muted
+iconMuted = "audio-volume-muted-blocking-symbolic"
 
 # Volume value
 # 0: the current volume will not be shown
@@ -46,6 +53,7 @@ if len(sys.argv) > 1:
         volume = volume + value
         m.setvolume(volume)
 
+icon = iconMuted
 msg = "muted"
 if volume > 0 and mute != 1:
     length = volume / 100 * volumeLength
@@ -56,6 +64,13 @@ if volume > 0 and mute != 1:
         msg = beforeValue + str(volume) + afterValue + msg
     elif showValue == 2:
         msg = msg + beforeValue + str(volume) + afterValue
+
+    if volume < 33:
+        icon = iconLow
+    elif volume < 66:
+        icon = iconMedium
+    else:
+        icon = iconHigh
 
 dunstCmd = ["dunstify", "-r", msgId, "-u", "low"]
 
